@@ -1,7 +1,0 @@
-flask
-flask-socketio
-
-gevent
-gevent-websocket
-
-auto_everything
