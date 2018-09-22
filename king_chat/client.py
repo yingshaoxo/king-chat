@@ -56,8 +56,6 @@ class ProtocolFactory(protocol.ClientFactory):
     def send(self, text):
         if self.clients:
             self.clients[-1].transport.write(text.encode('utf-8'))
-            print(self.clients[-1].transport.connected)
-            py.help(self.clients[-1].transport)
 
 
 class Client():
@@ -69,25 +67,26 @@ class Client():
         self._name = name
 
         self._factory = None
-        self.on_text_received_function = None
+        def default_handle_function(protocol, text):
+            print(text)
+        self._on_text_received_function = default_handle_function
 
-        self._tip = "connected at tcp://{ip}:{port}".format(ip=self._ip, port=str(self._port))
+        self._tip = "connected with tcp://{ip}:{port}".format(ip=self._ip, port=str(self._port))
 
-    def start(self, wait=True):
-        if (self.on_text_received_function):
-            self._factory = ProtocolFactory(self._name, self.on_text_received_function)
-            reactor.connectTCP(self._ip, self._port, self._factory)
-            self.Thread_Activity = threading.Thread(target=reactor.run, kwargs={"installSignalHandlers": False})
-            self.Thread_Activity.start()
-            print(self._tip)
+    def on_received(self, func):
+        self._on_text_received_function = func
 
-            if wait == True:
-                self.Thread_Activity.join()
-            else:
-                pass
+    def start(self, wait=False):
+        self._factory = ProtocolFactory(self._name, self._on_text_received_function)
+        reactor.connectTCP(self._ip, self._port, self._factory)
+        self.Thread_Activity = threading.Thread(target=reactor.run, kwargs={"installSignalHandlers": False})
+        self.Thread_Activity.start()
+        print(self._tip)
+
+        if wait == True:
+            self.Thread_Activity.join()
         else:
-            print('You must specify self.on_text_received_function to hanle incoming text')
-            exit()
+            pass
 
     def send(self, text):
         if self._factory:
@@ -99,11 +98,11 @@ class Client():
 
 
 if __name__ == '__main__':
-    client = Client(name='qq', ip='127.0.0.1', port=5920)
+    client = Client(name='telegram', ip='127.0.0.1', port=5920)
 
+    @client.on_received
     def on_received(protocol, text):
         print('\n', text)
-    client.on_text_received_function = on_received
 
     client.start(wait=False)
 

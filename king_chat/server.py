@@ -86,25 +86,27 @@ class Server():
         self._port = port
 
         self._factory = None
-        self.on_text_received_function = None
+
+        def default_handle_function(protocol, text):
+            print(text)
+        self._on_text_received_function = default_handle_function
 
         self._tip = "serving at tcp://{ip}:{port}".format(ip=self._ip, port=str(self._port))
 
-    def start(self, wait=True):
-        if (self.on_text_received_function):
-            self._factory = ClientFactory(self.on_text_received_function)
-            reactor.listenTCP(self._port, self._factory, interface=self._ip)
-            self.Thread_Activity = threading.Thread(target=reactor.run, kwargs={"installSignalHandlers": False})
-            self.Thread_Activity.start()
-            print(self._tip)
+    def on_received(self, func):
+        self._on_text_received_function = func
 
-            if wait == True:
-                self.Thread_Activity.join()
-            else:
-                pass
+    def start(self, wait=True):
+        self._factory = ClientFactory(self._on_text_received_function)
+        reactor.listenTCP(self._port, self._factory, interface=self._ip)
+        self.Thread_Activity = threading.Thread(target=reactor.run, kwargs={"installSignalHandlers": False})
+        self.Thread_Activity.start()
+        print(self._tip)
+
+        if wait == True:
+            self.Thread_Activity.join()
         else:
-            print('You must specify self.on_text_received_function to hanle incoming text')
-            exit()
+            pass
 
     def send_to_one(self, name, text):
         if self._factory:
@@ -120,7 +122,7 @@ class Server():
             print('you must start the client firest to send message!')
             exit()
 
-    def get_connected_clients(self):
+    def _get_connected_clients(self):
         if self._factory:
             return self._factory.clients
 
@@ -128,14 +130,14 @@ class Server():
 if __name__ == '__main__':
     server = Server(ip='127.0.0.1', port=5920)
 
+    @server.on_received
     def on_received(protocol, text):
         print(text)
-    server.on_text_received_function = on_received
+        protocol.send_to_all_except_sender(text)
 
     server.start(wait=False)
 
     while 1:
         text = input("what you want to say: ")
         server.send_to_one('qq', text)
-        print(server.get_connected_clients())
-
+        print(server._get_connected_clients())
