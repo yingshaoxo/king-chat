@@ -6,7 +6,7 @@ This is a powerful chat center for all kinds of messages.
 
 #### usage
 server
-```
+```python
 from king_chat import Server
 
 server = Server(ip="127.0.0.1", port=5920)
@@ -19,7 +19,7 @@ server.start(wait=True)
 ```
 
 client
-```
+```python
 from king_chat import Client
 
 client = Client(name="qq", ip="127.0.0.1", port=5920)
