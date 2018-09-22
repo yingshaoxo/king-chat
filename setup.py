@@ -22,8 +22,7 @@ VERSION = None
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'flask', 'flask-socketio', 'gevent', 'gevent-websocket', 'auto_everything',
-    'requests',
+    'twisted',
 ]
 
 # What packages are optional?
