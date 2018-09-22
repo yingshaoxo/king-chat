@@ -4,7 +4,7 @@ This is a powerful chat center for all kinds of messages.
 #### design principles
 * json in, json out
 
-#### Usage
+#### usage
 server
 ```
 server = Server(ip='127.0.0.1', port=5920)
