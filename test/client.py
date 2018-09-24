@@ -9,4 +9,5 @@ def on_received(protocol, text):
 client.start(wait=False)
 
 while 1:
-    client.send(input('words: '))
+    successed = client.send(input('words: '))
+    print(successed)

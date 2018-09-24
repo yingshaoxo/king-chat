@@ -44,18 +44,30 @@ class Protocol(protocol.Protocol):
         self.transport.write(text.encode("utf-8"))
 
 
-class ProtocolFactory(protocol.ClientFactory):
+class ProtocolFactory(protocol.ReconnectingClientFactory):
     def __init__(self, name, on_text_received_function):
         self.name = name
         self.clients = []
         self.on_text_received_function = on_text_received_function
 
     def buildProtocol(self, addr):
+        self.resetDelay()
         return Protocol(name=self.name, clients=self.clients, on_text_received_function=self.on_text_received_function)
+
+    def clientConnectionLost(self, connector, reason):
+        print("Lost connection: \n", reason)
+        protocol.ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
+
+    def clientConnectionFailed(self, connector, reason):
+        print("Connection failed: \n", reason)
+        protocol.ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
 
     def send(self, text):
         if self.clients:
             self.clients[-1].transport.write(text.encode('utf-8'))
+            return True
+        else:
+            return False
 
 
 class Client():
@@ -90,9 +102,9 @@ class Client():
 
     def send(self, text):
         if self._factory:
-            self._factory.send(text)
+            return self._factory.send(text)
         else:
-            print('you must start the client firest to send message!')
+            print('you must start the client first to send message!')
             exit()
 
 

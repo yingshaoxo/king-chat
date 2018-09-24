@@ -119,7 +119,7 @@ class Server():
         if self._factory:
             self._factory.send_to_all(text)
         else:
-            print('you must start the client firest to send message!')
+            print('you must start the client first to send message!')
             exit()
 
     def _get_connected_clients(self):

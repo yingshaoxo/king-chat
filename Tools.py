@@ -42,7 +42,6 @@ sudo pip3 install king_chat*
 
 cd ..
         """)
-        self.__clear()
 
     def publish(self):
         self.install()
