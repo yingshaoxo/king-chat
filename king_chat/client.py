@@ -4,20 +4,16 @@ from twisted.internet import protocol, reactor
 
 
 class Protocol(protocol.Protocol):
-    def __init__(self, name, clients, on_text_received_function):
-        self.clients = clients
-        self.name = name
-        self.state = "setname"
-
-        self.on_text_received_function = on_text_received_function
+    def __init__(self, factory):
+        self.factory = factory
 
     def connectionMade(self):
-        self.clients.append(self)
+        self.factory.clients.append(self)
         #print("connection made")
 
     def connectionLost(self, reason):
-        if self in self.clients:
-            self.clients.remove(self)
+        if self in self.factory.clients:
+            self.factory.clients.remove(self)
         #print("connection lost")
 
     def dataReceived(self, data):
@@ -29,16 +25,16 @@ class Protocol(protocol.Protocol):
 
         if text == "//**what's your name**//":
             self.handle_setname()
-        elif self.state == "chat":
+        elif self.factory.state == "chat":
             self.handle_chat(text)
 
     def handle_setname(self):
-        self.transport.write(f"{self.name}".encode('utf-8'))
-        self.state = "chat"
+        self.transport.write(f"{self.factory.name}".encode('utf-8'))
+        self.factory.state = "chat"
 
     def handle_chat(self, msg):
         msg = msg.strip("\n ")
-        self.on_text_received_function(self, msg)
+        self.factory.on_text_received_function(self, msg)
 
     def send(self, text):
         self.transport.write(text.encode("utf-8"))
@@ -47,12 +43,13 @@ class Protocol(protocol.Protocol):
 class ProtocolFactory(protocol.ReconnectingClientFactory):
     def __init__(self, name, on_text_received_function):
         self.name = name
+        self.state = "setname"
         self.clients = []
         self.on_text_received_function = on_text_received_function
 
     def buildProtocol(self, addr):
         self.resetDelay()
-        return Protocol(name=self.name, clients=self.clients, on_text_received_function=self.on_text_received_function)
+        return Protocol(self)
 
     def clientConnectionLost(self, connector, reason):
         print("Lost connection: \n", reason)
