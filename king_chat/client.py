@@ -44,6 +44,7 @@ class ProtocolFactory(protocol.ReconnectingClientFactory):
     def __init__(self, name, on_text_received_function):
         self.name = name
         self.state = "setname"
+
         self.clients = []
         self.on_text_received_function = on_text_received_function
 

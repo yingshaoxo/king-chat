@@ -4,18 +4,18 @@ from twisted.internet import protocol, reactor
 
 
 class Client(protocol.Protocol):
-    def __init__(self, clients, on_text_received_function):
-        self.clients = clients
-        self.on_text_received_function = on_text_received_function
+    def __init__(self, factory):
         self.name = None
         self.state = "getname"
+
+        self.factory = factory
 
     def connectionMade(self):
         self.transport.write("//**what's your name**//".encode("utf-8"))
 
     def connectionLost(self, reason):
-        if self.name in self.clients:
-            del self.clients[self.name]
+        if self.name in self.factory.clients:
+            del self.factory.clients[self.name]
 
     def dataReceived(self, data):
         try:
@@ -31,32 +31,32 @@ class Client(protocol.Protocol):
 
     def handle_getname(self, name):
         if name != "":
-            if name in self.clients:
+            if name in self.factory.clients:
                 self.transport.loseConnection()
                 return
             self.name = name
-            self.clients[name] = self # the self is a protocol, also a instance of connection
+            self.factory.clients[name] = self # the self is a protocol, also a instance of connection
             self.state = "chat"
         else:
             self.transport.loseConnection()
 
     def handle_chat(self, msg):
         msg = msg.strip("\n ")
-        self.on_text_received_function(self, msg)
+        self.factory.on_text_received_function(self, msg)
 
     def send(self, text):
         self.transport.write(text.encode("utf-8"))
 
     def send_to_one(self, name, text):
-        if name in self.clients:
-            self.clients[name].transport.write(text.encode("utf-8"))
+        if name in self.factory.clients:
+            self.factory.clients[name].transport.write(text.encode("utf-8"))
 
     def send_to_all(self, text):
-        for name, protocol in self.clients.items():
+        for name, protocol in self.factory.clients.items():
             protocol.transport.write(text.encode("utf-8"))
 
     def send_to_all_except_sender(self, text):
-        for name, protocol in self.clients.items():
+        for name, protocol in self.factory.clients.items():
             if protocol != self:
                 protocol.transport.write(text.encode("utf-8"))
 
@@ -67,7 +67,7 @@ class ClientFactory(protocol.Factory):
         self.on_text_received_function = on_text_received_function
 
     def buildProtocol(self, addr):
-        return Client(self.clients, self.on_text_received_function)
+        return Client(self)
 
     def send_to_one(self, name, text):
         if name in self.clients:
