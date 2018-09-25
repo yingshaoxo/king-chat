@@ -24,7 +24,6 @@ class Client(protocol.Protocol):
             print(e)
             text = ""
 
-        print(text)
         if self.state == "getname":
             self.handle_getname(text)
         elif self.state == "chat":
