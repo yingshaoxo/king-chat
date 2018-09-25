@@ -72,6 +72,9 @@ class ClientFactory(protocol.Factory):
     def send_to_one(self, name, text):
         if name in self.clients:
             self.clients[name].transport.write(text.encode("utf-8"))
+            return True
+        else:
+            return False
 
     def send_to_all(self, text):
         for name, protocol in self.clients.items():
