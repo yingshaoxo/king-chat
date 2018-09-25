@@ -24,6 +24,7 @@ class Client(protocol.Protocol):
             print(e)
             text = ""
 
+        print(text)
         if self.state == "getname":
             self.handle_getname(text)
         elif self.state == "chat":
@@ -142,5 +143,6 @@ if __name__ == '__main__':
 
     while 1:
         text = input("what you want to say: ")
-        server.send_to_one('qq', text)
+        #server.send_to_one('qq', text)
+        server.send_to_all(text)
         print(server._get_connected_clients())
