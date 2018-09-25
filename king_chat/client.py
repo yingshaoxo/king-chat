@@ -78,7 +78,7 @@ class Client():
 
         self._factory = None
         def default_handle_function(protocol, text):
-            print(text)
+            print("(default_action)You got msg: ", text)
         self._on_text_received_function = default_handle_function
 
         self._tip = "connected with tcp://{ip}:{port}".format(ip=self._ip, port=str(self._port))
