@@ -89,6 +89,7 @@ class Server():
         self._port = port
 
         self._factory = None
+        self.reactor = reactor
 
         def default_handle_function(protocol, text):
             print("(default_action)You got msg: ", text)
@@ -100,21 +101,16 @@ class Server():
         self._on_text_received_function = func
 
     def start(self, wait=True):
-        try:
-            self._factory = ClientFactory(self._on_text_received_function)
-            reactor.listenTCP(self._port, self._factory, interface=self._ip)
-            self.Thread_Activity = threading.Thread(target=reactor.run, kwargs={"installSignalHandlers": False})
-            self.Thread_Activity.start()
-            print(self._tip)
+        self._factory = ClientFactory(self._on_text_received_function)
+        reactor.listenTCP(self._port, self._factory, interface=self._ip)
+        self.Thread_Activity = threading.Thread(target=reactor.run, kwargs={"installSignalHandlers": False})
+        self.Thread_Activity.start()
+        print(self._tip)
 
-            if wait == True:
-                self.Thread_Activity.join()
-            else:
-                pass
-        except Exception as e:
-            print("\n"*3)
-            print(e)
-            print("\n"*3)
+        if wait == True:
+            self.Thread_Activity.join()
+        else:
+            pass
 
     def send_to_one(self, name, text):
         if self._factory:

@@ -76,6 +76,7 @@ class Client():
         self._port = port
         self._name = name
 
+        self.reactor = reactor
         self._factory = None
         def default_handle_function(protocol, text):
             print("(default_action)You got msg: ", text)
