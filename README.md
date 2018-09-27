@@ -4,6 +4,14 @@ This is a powerful chat center for all kinds of messages.
 #### design principles
 * json in, json out
 
+#### installation
+```bash
+git clone -b trunk https://github.com/yingshaoxo/king-chat.git
+sudo -H python3 setup.py sdist
+cd dist
+sudo pip3 install *
+```
+
 #### usage
 server
 ```python
