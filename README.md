@@ -7,6 +7,7 @@ This is a powerful chat center for all kinds of messages.
 #### installation
 ```bash
 git clone https://github.com/yingshaoxo/king-chat.git
+cd king-chat
 sudo -H python3 setup.py sdist
 cd dist
 sudo pip3 install *
