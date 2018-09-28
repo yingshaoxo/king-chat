@@ -6,7 +6,7 @@ with open(file_path) as f:
     long_description = f.read()
 
 setup(name='king_chat',
-        version='0.0.6',
+        version='0.0.7',
         description='This is a powerful chat center for all kinds of messages.',
         long_description=long_description,
         long_description_content_type='text/markdown',

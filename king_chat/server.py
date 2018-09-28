@@ -27,7 +27,10 @@ class Client(protocol.Protocol):
         if self.state == "getname":
             self.handle_getname(text)
         elif self.state == "chat":
-            self.handle_chat(text)
+            if text == "//**i'm connected**//":
+                return
+            else:
+                self.handle_chat(text)
 
     def handle_getname(self, name):
         if name != "":

@@ -92,12 +92,23 @@ class Client():
         reactor.connectTCP(self._ip, self._port, self._factory)
         self.Thread_Activity = threading.Thread(target=reactor.run, kwargs={"installSignalHandlers": False})
         self.Thread_Activity.start()
+
+        self.Thread_Activity = threading.Thread(target=self._make_sure_connected)
+        self.Thread_Activity.start()
         print(self._tip)
 
         if wait == True:
             self.Thread_Activity.join()
         else:
             pass
+
+    def _make_sure_connected(self):
+        from time import sleep
+        while 1:
+            sleep(10)
+            if self._factory:
+                if self._factory.state == "chat":
+                    self.send("//**i'm connected**//")
 
     def send(self, text):
         if self._factory:
