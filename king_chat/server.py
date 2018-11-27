@@ -24,14 +24,11 @@ class Client(protocol.Protocol):
             print(e)
             text = ""
 
+        text = text.replace('`', '')
         if self.state == "getname":
             self.handle_getname(text)
         elif self.state == "chat":
-            #if "//**i'm connected**//" in text:
-            if "**i'm connected**" in text:
-                return
-            else:
-                self.handle_chat(text)
+            self.handle_chat(text)
 
     def handle_getname(self, name):
         if name != "":
@@ -46,7 +43,8 @@ class Client(protocol.Protocol):
 
     def handle_chat(self, msg):
         msg = msg.strip("\n ")
-        self.factory.on_text_received_function(self, msg)
+        if msg != "":
+            self.factory.on_text_received_function(self, msg)
 
     def send(self, text):
         self.transport.write(text.encode("utf-8"))

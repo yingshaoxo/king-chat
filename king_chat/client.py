@@ -108,7 +108,7 @@ class Client():
             sleep(10)
             if self._factory:
                 if self._factory.state == "chat":
-                    self.send("//**i'm connected**//")
+                    self.send("`")
 
     def send(self, text):
         if self._factory:

@@ -4,10 +4,17 @@ server = Server(ip="127.0.0.1", port=5920)
 from flask import Flask
 app = Flask(__name__)
 
+count = 0
 @server.on_received
 def handle(protocol, text):
-    print(text)
-    server.send_to_all(text)
+    if text != "hi":
+        exit()
+
+    global count
+    count += 1
+    print(text + str(count))
+
+    server.send_to_one('qq', text)
 
 @app.route("/")
 def hello():
