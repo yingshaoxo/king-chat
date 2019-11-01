@@ -45,6 +45,7 @@ cd ..
 
     def publish(self):
         self.install()
+        print("type your username: ")
         t.run("""
 twine upload dist/*
         """)
