@@ -1,17 +1,17 @@
 # king-chat
 This is a powerful chat center for all kinds of messages.
 
-#### Principles
+### Principles
 json in, json out. 
 
 > That is to say, don't send pure text, it's silly, send json instead.
 
-#### Installation
+### Installation
 ```bash
 sudo pip3 install king-chat
 ```
 
-#### Usage
+### Usage
 server
 ```python
 from king_chat import Server
