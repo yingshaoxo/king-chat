@@ -2,8 +2,9 @@
 This is a powerful chat center for all kinds of messages.
 
 #### Principles
-* json in, json out. 
-    > That is to say, don't send pure text, it's silly, send json instead.
+json in, json out. 
+
+> That is to say, don't send pure text, it's silly, send json instead.
 
 #### Installation
 ```bash
